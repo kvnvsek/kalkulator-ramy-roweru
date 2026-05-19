@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kalkulator rozmiaru ramy roweru</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 40px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      background: #1e88e5;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1565c0;
+    }
+
+    .results {
+      margin-top: 30px;
+    }
+
+    .card {
+      background: #f8fafc;
+      padding: 18px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      border-left: 5px solid #1e88e5;
+    }
+
+    .bike-type {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .size {
+      font-size: 16px;
+      color: #333;
+    }
+
+    .label {
+      display: inline-block;
+      margin-top: 10px;
+      background: #1e88e5;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Kalkulator rozmiaru ramy roweru</h1>
+
+    <input 
+      type="number" 
+      id="height" 
+      placeholder="Podaj wzrost w cm"
+    />
+
+    <button onclick="calculateAll()">Oblicz</button>
+
+    <div class="results" id="results"></div>
+  </div>
+
+  <script>
+    function getFrameSize(height, multiplier) {
+      return Math.round(height * multiplier);
+    }
+
+    function getSizeLabel(height) {
+      if (height < 155) return "XS";
+      if (height < 165) return "S";
+      if (height < 175) return "M";
+      if (height < 185) return "L";
+      if (height < 195) return "XL";
+      return "XXL";
+    }
+
+    function calculateAll() {
+      const height = parseInt(document.getElementById("height").value);
+      const results = document.getElementById("results");
+
+      if (!height || height < 120 || height > 230) {
+        results.innerHTML = `
+          <div class="card">
+            Podaj poprawny wzrost.
+          </div>
+        `;
+        return;
+      }
+
+      const bikeTypes = [
+        {
+          name: "MTB",
+          multiplier: 0.26
+        },
+        {
+          name: "Szosa",
+          multiplier: 0.30
+        },
+        {
+          name: "Gravel",
+          multiplier: 0.29
+        },
+        {
+          name: "Trekking / Cross",
+          multiplier: 0.28
+        },
+        {
+          name: "City",
+          multiplier: 0.27
+        }
+      ];
+
+      const sizeLabel = getSizeLabel(height);
+
+      results.innerHTML = bikeTypes.map(bike => {
+        const frame = getFrameSize(height, bike.multiplier);
+        const inches = (frame / 2.54).toFixed(1);
+
+        return `
+          <div class="card">
+            <div class="bike-type">${bike.name}</div>
+
+            <div class="size">
+              Rama: <strong>${frame} cm</strong>
+            </div>
+
+            <div class="size">
+              Rozmiar w calach: <strong>${inches}"</strong>
+            </div>
+
+            <div class="label">
+              Rozmiar producenta: ${sizeLabel}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+  </script>
+
+</body>
+</html>
